@@ -155,7 +155,8 @@
                 <span class="card-title">888 Номера</span>
                 <span class="card-value" id="val-888">0 TON ≈ $0</span>
             </div>
-            innerText = totalPortfolioTon.toFixed(2) + " TON";
+
+            getElementById('total-ton').innerText = totalPortfolioTon.toFixed(2) + " TON";
                 document.getElementById('total-usd').innerText = "~$" + totalPortfolioUsd.toFixed(2);
 
                 document.getElementById('val-888').innerText = n888Floor.toFixed(1) + " TON ≈ $" + (n888Floor * tonPrice).toFixed(0);

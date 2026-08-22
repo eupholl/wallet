@@ -1,123 +1,62 @@
-<div class="card-subtext" id="count-888">найдено 0 штук</div>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NFT Portfolio Tracker</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background-color: #0b0e14; color: #ffffff; padding: 16px; display: flex; justify-content: center; }
+        .container { width: 100%; max-width: 420px; display: flex; flex-direction: column; gap: 12px; }
+        .main-balance { text-align: center; padding: 12px 0 20px 0; }
+        .balance-ton { font-size: 38px; font-weight: 800; color: #ffffff; }
+        .balance-usd { font-size: 16px; color: #707a8a; margin-top: 4px; }
+        .input-group { display: flex; flex-direction: column; gap: 10px; }
+        input { width: 100%; padding: 16px; border-radius: 16px; border: 1px solid #1e232d; background: #151a21; color: white; font-size: 15px; outline: none; text-align: center; }
+        .btn-check { width: 100%; background: linear-gradient(135deg, #0098ea 0%, #007bc1 100%); color: white; border: none; border-radius: 16px; padding: 16px; font-size: 16px; font-weight: 700; cursor: pointer; }
+        .card { background-color: #151a21; border-radius: 20px; padding: 16px 18px; display: flex; flex-direction: column; gap: 4px; border: 1px solid #1e232d; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; }
+        .card-title { font-size: 16px; font-weight: 600; }
+        .card-value { font-size: 15px; font-weight: 700; color: #0098ea; }
+        .card-subtext { font-size: 11px; color: #707a8a; text-align: right; }
+        .scam-card { border-color: rgba(255, 69, 58, 0.2); background-color: rgba(255, 69, 58, 0.03); }
+        .scam-title { color: #ff453a; }
+        .loader { display: none; text-align: center; font-size: 13px; color: #0098ea; padding: 6px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="main-balance">
+            <div class="balance-ton" id="total-ton">0.00 GRAM</div>
+            <div class="balance-usd" id="total-usd">~$0.00</div>
         </div>
-
+        <div class="input-group">
+            <input type="text" id="wallet-input" placeholder="Адрес GRAM или .gram...">
+            <button class="btn-check" id="check-btn">Проверить</button>
+        </div>
+        <div class="loader" id="loader">⏳ Получаем данные из сети...</div>
         <div class="card">
-            <div class="card-header">
-                <span class="card-title">Usernames</span>
-                <span class="card-value" id="val-user">0 GRAM ≈ $0</span>
-            </div>
+            <div class="card-header"><span class="card-title">888 Номера</span><span class="card-value" id="val-888">0 GRAM ≈ $0</span></div>
+            <div class="card-subtext" id="count-888">найдено 0 штук</div>
+        </div>
+        <div class="card">
+            <div class="card-header"><span class="card-title">Usernames</span><span class="card-value" id="val-user">0 GRAM ≈ $0</span></div>
             <div class="card-subtext" id="count-user">найдено 0 штук</div>
         </div>
-
         <div class="card">
-            <div class="card-header">
-                <span class="card-title">NFT Коллекции</span>
-                <span class="card-value" id="val-nft">0 GRAM ≈ $0</span>
-            </div>
+            <div class="card-header"><span class="card-title">NFT Коллекции</span><span class="card-value" id="val-nft">0 GRAM ≈ $0</span></div>
             <div class="card-subtext" id="count-nft">найдено 0 штук</div>
         </div>
-
         <div class="card scam-card">
-            <div class="card-header">
-                <span class="card-title scam-title">Scam</span>
-                <span class="card-value" style="color: #ff453a;" id="val-scam">Скрыто</span>
-            </div>
+            <div class="card-header"><span class="card-title scam-title">Scam</span><span class="card-value" style="color: #ff453a;" id="val-scam">Скрыто</span></div>
             <div class="card-subtext" style="color: #ff453a;" id="count-scam">найдено 0 штук</div>
         </div>
     </div>
-
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             var tg = window.Telegram ? window.Telegram.WebApp : null;
             if (tg) tg.expand();
-
             var TONAPI_KEY = "AFN27N234JRDMBYAAAAAK7DCUDKGTMwTPROSP2PFBJQQBGPUX477IK4H2KAXIIWKNTOUFLY";
             var checkBtn = document.getElementById('check-btn');
-
-            if (checkBtn) {
-                checkBtn.addEventListener('click', analyzeWallet);
-            }
-
-            async function analyzeWallet() {
-                var address = document.getElementById('wallet-input').value.trim();
-                if (!address) return;
-
-                document.getElementById('loader').style.display = 'block';
-
-                try {
-                    var rateResp = await fetch("https://tonapi.io/v2/rates?tokens=ton&currencies=usd", {
-                        headers: { "X-API-Key": TONAPI_KEY }
-                    });
-                    var rateData = await rateResp.json();
-                    var tonPrice = rateData.rates.TON.prices.USD;
-
-                    var accResp = await fetch("https://tonapi.io/v2/accounts/" + address, {
-                        headers: { "X-API-Key": TONAPI_KEY }
-                    });
-                    var accData = await accResp.json();
-                    var tonBalance = accData.balance / Math.pow(10, 9);
-
-                    var nftResp = await fetch("https://tonapi.io/v2/accounts/" + address + "/nfts", {
-                        headers: { "X-API-Key": TONAPI_KEY }
-                    });
-                    var nftData = await nftResp.json();
-
-                    var n888Count = 0, n888Floor = 0;
-                    var userCount = 0, userFloor = 0;
-                    var nftCount = 0, nftFloor = 0;
-                    var scamCount = 0;
-
-                    var FRAGMENT_USERNAMES = "0:0e41dc1dc3c9067ed24248580e12b3359818d83dee0304fadcf0d57c72f0a095";
-                    var FRAGMENT_NUMBERS = "0:735a1cc316212d26d70eb0041eb4ef50949d2fb2d39bc13106d80d28b7e2898b";
-
-                    (nftData.nft_items || []).forEach(function(item) {
-                        var collAddr = (item.collection && item.collection.address) ? item.collection.address.toLowerCase() : "";
-                        var name = (item.metadata && item.metadata.name) ? item.metadata.name : "";
-                        var isScam = (item.metadata && item.metadata.is_scam)  item.trust === "scam"  item.trust === "none" || name.toLowerCase().indexOf("unlock") !== -1;
-
-                        if (isScam) {
-                            scamCount++;
-                        } else {
-                            var floor = ((item.collection && item.collection.floor_price) ? item.collection.floor_price.value : 0) / Math.pow(10, 9);
-
-                            if (collAddr === FRAGMENT_NUMBERS || name.indexOf("+888") !== -1) {
-                                n888Count++;
-                                n888Floor += floor;
-                                    } else if (collAddr === FRAGMENT_USERNAMES || name.indexOf("@") !== -1) {
-                                userCount++;
-                                userFloor += floor;
-                            } else {
-                                nftCount++;
-                                nftFloor += floor;
-                            }
-                        }
-                    });
-
-                    var totalNftFloor = n888Floor + userFloor + nftFloor;
-                    var totalPortfolioTon = tonBalance + totalNftFloor;
-                    var totalPortfolioUsd = totalPortfolioTon * tonPrice;
-
-                    document.getElementById('total-ton').innerText = totalPortfolioTon.toFixed(2) + " GRAM";
-                    document.getElementById('total-usd').innerText = "~$" + totalPortfolioUsd.toFixed(2);
-
-                    document.getElementById('val-888').innerText = n888Floor.toFixed(1) + " GRAM ≈ $" + (n888Floor * tonPrice).toFixed(0);
-                    document.getElementById('count-888').innerText = "найдено " + n888Count + " штук";
-
-                    document.getElementById('val-user').innerText = userFloor.toFixed(1) + " GRAM ≈ $" + (userFloor * tonPrice).toFixed(0);
-                    document.getElementById('count-user').innerText = "найдено " + userCount + " штук";
-
-                    document.getElementById('val-nft').innerText = nftFloor.toFixed(1) + " GRAM ≈ $" + (nftFloor * tonPrice).toFixed(0);
-                    document.getElementById('count-nft').innerText = "найдено " + nftCount + " штук";
-
-                    document.getElementById('count-scam').innerText = "найдено " + scamCount + " штук";
-
-                } catch (e) {
-                    alert("Ошибка проверки адреса!");
-                } finally {
-                    document.getElementById('loader').style.display = 'none';
-                }
-            }
-        });
-    </script>
-</body>
-</html>
+            if (checkBtn) checkBtn.addEventListener('click', analyzeWallet);

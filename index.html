@@ -1,18 +1,161 @@
-} else if (collAddr === FRAGMENT_USERNAMES || name.includes("@")) {
-                            userCount++;
-                            userFloor += floor;
-                        } else {
-                            nftCount++;
-                            nftFloor += floor;
-                        }
-                    }
-                });
+<!DOCTYPE html>
+<html lang="ru" translate="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google" content="notranslate">
+    <title>NFT Portfolio Tracker</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-                const totalNftFloor = n888Floor + userFloor + nftFloor;
-                const totalPortfolioTon = tonBalance + totalNftFloor;
-                const totalPortfolioUsd = totalPortfolioTon * tonPrice;
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #0b0e14;
+            color: #ffffff;
+            padding: 16px;
+            display: flex;
+            justify-content: center;
+        }
 
-                document.getElementById('total-ton').innerText = totalPortfolioTon.toFixed(2) + " TON";
+        .container {
+            width: 100%;
+            max-width: 420px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .main-balance {
+            text-align: center;
+            padding: 12px 0 20px 0;
+        }
+
+        .balance-ton {
+            font-size: 38px;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: -0.8px;
+        }
+
+        .balance-usd {
+            font-size: 16px;
+            color: #707a8a;
+            font-weight: 500;
+            margin-top: 4px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 6px;
+        }
+
+        input {
+            width: 100%;
+            padding: 16px;
+            border-radius: 16px;
+            border: 1px solid #1e232d;
+            background-color: #151a21;
+            color: white;
+            font-size: 15px;
+            outline: none;
+            text-align: center;
+        }
+
+        input:focus {
+            border-color: #0098ea;
+        }
+
+        .btn-check {
+            width: 100%;
+            background: linear-gradient(135deg, #0098ea 0%, #007bc1 100%);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .card {
+            background-color: #151a21;
+            border-radius: 20px;
+            padding: 16px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            border: 1px solid #1e232d;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .card-value {
+            font-size: 15px;
+            font-weight: 700;
+            color: #0098ea;
+        }
+
+        .card-subtext {
+            font-size: 11px;
+            color: #707a8a;
+            text-align: right;
+            font-weight: 500;
+        }
+
+        .scam-card {
+            border-color: rgba(255, 69, 58, 0.2);
+            background-color: rgba(255, 69, 58, 0.03);
+        }
+
+        .scam-title {
+            color: #ff453a;
+        }
+
+        .loader {
+            display: none;
+            text-align: center;
+            font-size: 13px;
+            color: #0098ea;
+            padding: 6px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="main-balance">
+            <div class="balance-ton" id="total-ton">0.00 TON</div>
+            <div class="balance-usd" id="total-usd">~$0.00</div>
+        </div>
+
+        <div class="input-group">
+            <input type="text" id="wallet-input" placeholder="Адрес TON или .ton...">
+            <button class="btn-check" onclick="analyzeWallet()">Проверить</button>
+        </div>
+
+        <div class="loader" id="loader">⏳ Получаем данные из сети TON...</div>
+
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">888 Номера</span>
+                <span class="card-value" id="val-888">0 TON ≈ $0</span>
+            </div>
+            innerText = totalPortfolioTon.toFixed(2) + " TON";
                 document.getElementById('total-usd').innerText = "~$" + totalPortfolioUsd.toFixed(2);
 
                 document.getElementById('val-888').innerText = n888Floor.toFixed(1) + " TON ≈ $" + (n888Floor * tonPrice).toFixed(0);
@@ -27,7 +170,7 @@
                 document.getElementById('count-scam').innerText = "найдено " + scamCount + " штук";
 
             } catch (e) {
-                alert(" Ошибка проверки адреса!");
+                alert("Ошибка проверки адреса!");
             } finally {
                 document.getElementById('loader').style.display = 'none';
             }

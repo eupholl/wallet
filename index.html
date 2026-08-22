@@ -1,10 +1,4 @@
-return;
-            }
-
-            document.getElementById('loader').style.display = 'block';
-
-            try {
-                var TONAPI_KEY = "AFN27N234JRDMBYAAAAAK7DCUDKGTMwTPROSP2PFBJQQBGPUX477IK4H2KAXIIWKNTOUFLY";
+var TONAPI_KEY = "AFN27N234JRDMBYAAAAAK7DCUDKGTMwTPROSP2PFBJQQBGPUX477IK4H2KAXIIWKNTOUFLY";
                 var headers = { "X-API-Key": TONAPI_KEY };
 
                 var tonPrice = 5.5;
@@ -66,8 +60,7 @@ return;
             } catch (e) {
                 alert("Не удалось загрузить данные кошелька. Проверьте адрес!");
             } finally {
-                document.getElementById('loader').style.
-                display = 'none';
+                document.getElementById('loader').style.display = 'none';
             }
         }
     </script>
